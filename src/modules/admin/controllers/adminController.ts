@@ -19,6 +19,7 @@ interface AddUserBody{
       salary:number;
       employeeStatus:string;
       password:string;
+      profile:string
 }
 
 function generateRandomPassword(length = 12) {
@@ -79,7 +80,7 @@ export const AddUser = async(req:Request<{},{},AddUserBody>,res:Response):Promis
 
             await newUser.save()
 
-            await sendVerificationmail(email,randomPass);
+            await sendVerificationmail(email,randomPass,req.body.position);
             
 
            

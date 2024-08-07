@@ -20,7 +20,7 @@ app.use('/admin', adminRoutes);
 app.use('/employee',employeeRoutes)
 
 // View engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.set('view engine', 'ejs');
 
 app.get('/', (req: Request, res: Response) => res.send('server is ready'));

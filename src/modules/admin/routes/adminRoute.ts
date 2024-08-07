@@ -16,7 +16,7 @@ router.get('/getusers',getAllUsers)
 // get detials of specific user
 router.get('/getuser/:userId',getSpecificUser)
 // update user data
-router.put('/updateuser/:userId',updateUser)
+router.put('/updateuser/:userId',updateUser)        
 // delete a specific user
 router.delete('/deleteuser/:userId',deleteUser)
 export default router;

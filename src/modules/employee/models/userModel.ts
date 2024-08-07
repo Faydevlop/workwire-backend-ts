@@ -15,6 +15,7 @@ interface IUser extends Document{
       salary:number;
       employeeStatus:string;
       password:string;
+      profileImageUrl:string;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -31,6 +32,7 @@ const UserSchema = new Schema<IUser>({
   salary: { type: Number, required: true },
   employeeStatus: { type: String, required: true },
   password: { type: String, required: true },
+  profileImageUrl:{type:String,default:null}
 })
 
 const User = model<IUser>('User',UserSchema)
