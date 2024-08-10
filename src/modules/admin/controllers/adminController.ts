@@ -78,9 +78,10 @@ export const AddUser = async(req:Request<{},{},AddUserBody>,res:Response):Promis
                 password: hashedPassword 
             })
 
-            await newUser.save()
+            
 
             await sendVerificationmail(email,randomPass,req.body.position);
+            await newUser.save()
             
 
            

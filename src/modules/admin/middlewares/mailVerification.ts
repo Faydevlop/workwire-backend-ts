@@ -3,10 +3,12 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service:'gmail',
     auth:{
-        user:'workwiseoffice@gmail.com',
-        pass:'jxrd fiij lmtt ifav'
+        user:process.env.EMAIL,
+        pass:process.env.EMAILPASS
     }
 })
+
+
 
 const sendVerificationmail = async(userEmail:string,randomPass:string,role:string) => {
     const mailOptions = {
