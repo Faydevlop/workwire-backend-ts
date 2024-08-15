@@ -1,34 +1,57 @@
-import express ,{Router} from 'express';
-import {adminLogin,adminSignup}  from '../controllers/adminAuthController'
-import verifyToken from '../../../middlewares/jwtMiddleware';
-import { AddUser, deleteUser, getAllUsers, getSpecificUser, updateUser } from '../controllers/adminController';
-import { getAllmanager, getAvilableempo } from '../controllers/operationController';
-import { addNewProject, getprojectdetails, listProjects } from '../controllers/projectController';
+import express, { Router } from "express";
+import { adminLogin, adminSignup } from "../controllers/adminAuthController";
+import { protect } from "../../../middlewares/jwtMiddleware";
+import {
+  AddUser,
+  deleteUser,
+  getAllUsers,
+  getSpecificUser,
+  updateUser,
+} from "../controllers/adminController";
+import {
+  getAllmanager,
+  getAvilableempo,
+} from "../controllers/operationController";
+import {
+  addNewProject,
+  deleteProject,
+  editProject,
+  getprojectdetails,
+  listProjects,
+} from "../controllers/projectController";
 
-const router:Router = express.Router();
+const router: Router = express.Router();
 
 // admin login
-router.post('/signup',adminSignup)
-// admin signup 
-router.post('/login',adminLogin)
+router.post("/signup", adminSignup);
+// admin signup
+router.post("/login", adminLogin);
+
+// protected routes
+
 // Adding new User with email verification
-router.post('/adduser',AddUser) 
+router.post("/adduser",protect, AddUser);
 // Getting all the user Data
-router.get('/getusers',getAllUsers)
+router.get("/getusers",protect, getAllUsers);
 // get detials of specific user
-router.get('/getuser/:userId',getSpecificUser)
+router.get("/getuser/:userId",protect, getSpecificUser);
 // update user data
-router.put('/updateuser/:userId',updateUser)        
+router.put("/updateuser/:userId",protect, updateUser);
 // delete a specific user
-router.delete('/deleteuser/:userId',deleteUser)
+router.delete("/deleteuser/:userId",protect, deleteUser);
 // get managers and employees
-router.get('/getmanagers',getAllmanager)
-router.get('/getUnassignedemployees',getAvilableempo)
+router.get("/getmanagers",protect, getAllmanager);
+router.get("/getUnassignedemployees",protect, getAvilableempo);
 // post for creating new project
-router.post('/addNewProject',addNewProject)
+router.post("/addNewProject",protect, addNewProject);
 // get for project listing
-router.get('/getprojects',listProjects)
-// geting specific project details 
-router.get('/project/:projectId',getprojectdetails)
+router.get("/getprojects",protect, listProjects);
+// geting specific project details
+router.get("/project/:projectId",protect, getprojectdetails);
+// edting project
+router.post("/editproject/:projectId",protect, editProject);
+// delete project
+router.post("/deleteproject/:projectId",protect,deleteProject)
+// admin logout
 
 export default router;
