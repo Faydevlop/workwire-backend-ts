@@ -8,6 +8,7 @@ import adminRoutes from './modules/admin/routes/adminRoute';
 import employeeRoutes from './modules/employee/routes/userRoutes'
 import managerRoutes from './modules/manager/routes/managerRoutes'
 import HrRoutes from './modules/hr/routes/HrRoutes'
+import LeaveRoute from './modules/leaveManagement/routes/leaveRoutes'
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/admin', adminRoutes);
 app.use('/employee',employeeRoutes)
 app.use('/manager',managerRoutes)
 app.use('/Hr',HrRoutes)
+app.use('/leave',LeaveRoute)
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

@@ -80,6 +80,8 @@ export const AddUser = async (
     });
 
     await sendVerificationmail(email, randomPass, req.body.position);
+    console.log('Password:',randomPass);
+    
     await newUser.save();
 
     res
