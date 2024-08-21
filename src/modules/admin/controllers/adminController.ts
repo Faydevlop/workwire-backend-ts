@@ -13,7 +13,7 @@ interface AddUserBody {
   phone: number;
   gender: string;
   address: string;
-  department: string;
+  // department: string;
   position: string;
   dateOfJoining: Date;
   employeeStatus: string;
@@ -49,7 +49,7 @@ export const AddUser = async (
       phone,
       gender,
       address,
-      department,
+      // department,
       position,
       dateOfJoining,
       employeeStatus,
@@ -72,7 +72,7 @@ export const AddUser = async (
       phone,
       gender,
       address,
-      department,
+      // department,
       position,
       dateOfJoining,
       employeeStatus,
@@ -143,7 +143,7 @@ export const updateUser = async (
     user.phone = req.body.phone || user.phone;
     user.gender = req.body.gender || user.gender;
     user.address = req.body.address || user.address;
-    user.department = req.body.department || user.department;
+    // user.department = req.body.department || user.department;
     user.position = req.body.position || user.position;
     user.dateOfJoining = req.body.dateOfJoining || user.dateOfJoining;
     user.employeeStatus = req.body.employeeStatus || user.employeeStatus;

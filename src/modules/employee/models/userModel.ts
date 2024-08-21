@@ -9,7 +9,7 @@ interface IUser extends Document {
   phone: number;
   gender: string;
   address: string;
-  department: string;
+  department: mongoose.Schema.Types.ObjectId | null;
   position: string;
   dateOfJoining: Date;
   // salary: mongoose.Schema.Types.ObjectId;
@@ -27,7 +27,11 @@ const UserSchema = new Schema<IUser>({
   phone: { type: Number, required: true },
   gender: { type: String, required: true },
   address: { type: String, required: true },
-  department: { type: String, required: true },
+  department: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Department", // Refers to the Department model
+    default: null
+  },
   position: { type: String, required: true },
   dateOfJoining: { type: Date, required: true },
   // salary: {type: Schema.Types.ObjectId, ref: "Payroll" },

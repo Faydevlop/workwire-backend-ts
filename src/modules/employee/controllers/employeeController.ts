@@ -53,7 +53,7 @@ export const resetPassRequest = async (
     }
 
     const token = Jwt.sign({ userId: existUser._id }, process.env.JWT_SECRET!, {
-      expiresIn: "1h",
+      expiresIn: "1d",
     });
     const resetLink = `${process.env.FRONTENDAPI}/employee/reset-password?token=${token}`;
 

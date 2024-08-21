@@ -37,7 +37,7 @@ export const HrLogin = async(req:Request<{},{},HrLoginBody>,res:Response):Promis
     }
     
     const token = jwt.sign({userId:user._id},process.env.JWT_SECRET!,{
-        expiresIn:'1h'
+        expiresIn:'1d'
     })
     
     res.status(200).json({token,manager:user})

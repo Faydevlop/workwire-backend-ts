@@ -7,8 +7,8 @@ interface IProject extends Document {
   endDate: Date;
   priority: string;
   description: string;
-  teamLead: mongoose.Schema.Types.ObjectId;
-  teamMates: mongoose.Schema.Types.ObjectId[];
+  department: mongoose.Schema.Types.ObjectId;
+
 }
 
 const ProjectSchema: Schema = new Schema({
@@ -22,8 +22,9 @@ const ProjectSchema: Schema = new Schema({
   endDate: { type: Date, required: true },
   priority: { type: String, enum: ["low", "medium", "high"], required: true },
   description: { type: String },
-  teamLead: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  teamMates: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
+  department: { type: Schema.Types.ObjectId, ref: "Department", required: true }
+
+ 
 });
 
 export default mongoose.model<IProject>("Project", ProjectSchema);
