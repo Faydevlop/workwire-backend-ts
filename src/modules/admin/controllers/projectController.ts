@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import project from "../models/projectModel";
 import User from "../../employee/models/userModel";
 import mongoose from "mongoose";
+import Department from "../../Department/model/departmentModel";
 
 export const addNewProject = async (
   req: Request,
@@ -130,7 +131,7 @@ export const editProject = async (
 
 export const deleteProject = async (req:Request,res:Response):Promise<void> =>{
             const {projectId} = req.params;
-            console.log(projectId);
+            console.log('delete project request is here',projectId);
             
             try {
               const projectdetails = await project.findById(projectId);
@@ -149,6 +150,28 @@ export const deleteProject = async (req:Request,res:Response):Promise<void> =>{
               console.error('Error deleting project:', error);
               res.status(500).json({ message: 'Server error' });
             }
+}
+
+export const projectlisting = async(req:Request,res:Response):Promise<void>=>{
+  try {
+    const {managerId} = req.params;
+    const department = await Department.findOne({headOfDepartMent:managerId});
+    if(!department){
+      res.status(400).json({message:'Department Not found'});
+      return
+    }
+    const projectDetails = await project.find({department:department._id}).populate('department')
+
+    if(!projectDetails){
+      res.status(400).json({message:'project details not found'});
+      return
+    }
+
+    res.status(200).json({projectDetails});
+    
+  } catch (error) {
+    
+  }
 }
 
 

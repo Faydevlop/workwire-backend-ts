@@ -8,16 +8,14 @@ import {
   getSpecificUser,
   updateUser,
 } from "../controllers/adminController";
-import {
-  getAllmanager,
-  getAvilableempo,
-} from "../controllers/operationController";
+
 import {
   addNewProject,
   deleteProject,
   editProject,
   getprojectdetails,
   listProjects,
+  projectlisting,
 } from "../controllers/projectController";
 
 const router: Router = express.Router();
@@ -40,8 +38,8 @@ router.put("/updateuser/:userId",protect, updateUser);
 // delete a specific user
 router.delete("/deleteuser/:userId",protect, deleteUser);
 // get managers and employees
-router.get("/getmanagers",protect, getAllmanager);
-router.get("/getUnassignedemployees",protect, getAvilableempo);
+// router.get("/getmanagers",protect, getAllmanager);
+// router.get("/getUnassignedemployees",protect, getAvilableempo);
 // post for creating new project
 router.post("/addNewProject",protect, addNewProject);
 // get for project listing
@@ -51,7 +49,9 @@ router.get("/project/:projectId",protect, getprojectdetails);
 // edting project
 router.post("/editproject/:projectId",protect, editProject);
 // delete project
-router.post("/deleteproject/:projectId",protect,deleteProject)
+router.post("/deleteproject/:projectId",deleteProject)
+// project listing in tasks
+router.get('/projectlist/:managerId',projectlisting)
 // admin logout
 
 export default router;

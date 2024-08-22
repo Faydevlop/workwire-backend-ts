@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../../employee/models/userModel";
 import mongoose from "mongoose";
 import Department from "../model/departmentModel";
+import Project from '../../admin/models/projectModel'
 
 export const listNonDepartmentempo = async(req:Request,res:Response):Promise<void>=>{
     console.log('req is here 1');
@@ -143,7 +144,14 @@ export const listDetails = async(req:Request,res:Response):Promise<void>=>{
             return
         }
 
-        res.status(200).json({department:departmentDetails})
+        const projectDetails = await Project.find({ department: departmentId });
+      
+        
+
+
+       
+
+        res.status(200).json({department:departmentDetails,projects:projectDetails})
 
 
     } catch (error) {
@@ -151,9 +159,7 @@ export const listDetails = async(req:Request,res:Response):Promise<void>=>{
     }
 }
 
-export const updateDepartment = async(req:Request,res:Response):Promise<void>=>{
-   
-}
+
 
 export const editDetails = async(req:Request,res:Response)=>{
     const {departmentId} = req.params;
