@@ -3,6 +3,7 @@ import project from "../models/projectModel";
 import User from "../../employee/models/userModel";
 import mongoose from "mongoose";
 import Department from "../../Department/model/departmentModel";
+import taskModel from "../../TaskManagement/models/taskModel";
 
 export const addNewProject = async (
   req: Request,
@@ -167,7 +168,11 @@ export const projectlisting = async(req:Request,res:Response):Promise<void>=>{
       return
     }
 
-    res.status(200).json({projectDetails});
+    // Fetch tasks for each project
+    const projectIds = projectDetails.map(p => p._id);
+    const tasks = await taskModel.find({ projectId: { $in: projectIds } }).populate('projectId')
+
+    res.status(200).json({projectDetails,tasks});
     
   } catch (error) {
     

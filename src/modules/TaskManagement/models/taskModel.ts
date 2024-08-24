@@ -6,7 +6,7 @@ interface ITasks extends Document{
     description:string;
     status:string;
     dueDate:Date;
-    assignedTo:mongoose.Schema.Types.ObjectId;
+    assignedTo:mongoose.Schema.Types.ObjectId[] | null ;
     createdAt:Date;
     comments:mongoose.Schema.Types.ObjectId[] | null;
     priority:string;
@@ -18,10 +18,10 @@ const TaskSchema: Schema = new Schema({
     description:String,
     status:String,
     dueDate:Date,
-    assignedTo:{ type: Schema.Types.ObjectId, ref: "User", required: true },
+    assignedTo:[{ type: Schema.Types.ObjectId, ref: "User", default:null }],
     createdAt:Date,
-    comments:{ type: Schema.Types.ObjectId, ref: "Comments", default:null },
+    comments:[{ type: Schema.Types.ObjectId, ref: "Comments", default:null }],
     priority:String,
 })
 
-export default mongoose.model<ITasks>('Tasks',TaskSchema  )
+export default mongoose.model<ITasks>('Tasks',TaskSchema  ) 
