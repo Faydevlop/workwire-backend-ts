@@ -1,5 +1,5 @@
 import express , {Router} from 'express'
-import { CreateTask, listUsers } from '../controllers/taskController';
+import { CreateTask, listUsers, taskdetails } from '../controllers/taskController';
 
 const router:Router = express.Router();
 
@@ -7,6 +7,8 @@ const router:Router = express.Router();
 router.post('/createtask/:ProjectId',CreateTask);
 // listing users for task creating
 router.get('/listUsers/:ProjectId',listUsers)
+// list task details 
+router.get(`/taskdetails/:taskId`,taskdetails)
 
 
 

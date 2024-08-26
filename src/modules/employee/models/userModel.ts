@@ -12,7 +12,7 @@ interface IUser extends Document {
   department: mongoose.Schema.Types.ObjectId | null;
   position: string;
   dateOfJoining: Date;
-  // salary: mongoose.Schema.Types.ObjectId;
+  payroll: mongoose.Schema.Types.ObjectId | null;
   employeeStatus: string;
   password: string;
   profileImageUrl: string;
@@ -34,7 +34,7 @@ const UserSchema = new Schema<IUser>({
   },
   position: { type: String, required: true },
   dateOfJoining: { type: Date, required: true },
-  // salary: {type: Schema.Types.ObjectId, ref: "Payroll" },
+  payroll: {type: Schema.Types.ObjectId, ref: "Payroll", default:null },
   employeeStatus: { type: String, required: true },
   password: { type: String, required: true },
   profileImageUrl: { type: String, default: null },

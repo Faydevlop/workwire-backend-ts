@@ -23,7 +23,7 @@ const LeaveSchema: Schema<ILeave> = new Schema({
     required: true,
   },
   startDate: {
-    type: Date,
+    type: Date,   
     required: true,
   },
   endDate: {

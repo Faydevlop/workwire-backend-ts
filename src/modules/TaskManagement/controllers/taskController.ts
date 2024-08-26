@@ -84,3 +84,20 @@ export const listUsers = async(req:Request,res:Response):Promise<void>=>{
         res.status(500).json({ message: error});
     }
 }
+
+export const taskdetails = async(req:Request,res:Response):Promise<void>=>{
+    try {
+        const {taskId} = req.params;
+        const taskDetails = await Task.findById(taskId).populate('assignedTo')
+
+        if(!taskDetails){
+            res.status(400).json({message:'Task is not found'})
+            return
+        }
+
+        res.status(200).json({task:taskDetails});
+
+    } catch (error) {
+        res.status(500).json({ message: error});
+    }
+}
