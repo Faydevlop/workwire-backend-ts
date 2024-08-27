@@ -5,25 +5,21 @@ interface IPayroll extends Document {
   employee: mongoose.Schema.Types.ObjectId;
   payPeriodStart: Date;
   payPeriodEnd: Date;
-  payDate: Date;
+  payPeriod: string;
   baseSalary: number;
   bonuses: number;
   totalAmount: number;
   deductions: number;
   paymentStatus: 'Pending' | 'Paid' | 'Overdue';
   paymentMethod: string;
+  permonthsalary:number;
 }
-
-// Define the Payroll Schema
 const payrollSchema: Schema<IPayroll> = new Schema({
-  // Reference to the Employee model
   employee: { 
     type: Schema.Types.ObjectId, 
     ref: 'User', 
     required: true 
   },
-  
-  // Payroll period and dates
   payPeriodStart: { 
     type: Date, 
     required: true 
@@ -32,12 +28,14 @@ const payrollSchema: Schema<IPayroll> = new Schema({
     type: Date, 
     required: true 
   },
-  payDate: { 
-    type: Date, 
+  payPeriod: { 
+    type: String, 
     required: true 
   },
-
-  // Compensation details
+  permonthsalary: { 
+    type: Number, 
+    required: true 
+  },
   baseSalary: { 
     type: Number, 
     required: true 
@@ -46,7 +44,6 @@ const payrollSchema: Schema<IPayroll> = new Schema({
     type: Number, 
     default: 0 
   },
-
   totalAmount: { 
     type: Number, 
     default: 0 
@@ -55,9 +52,6 @@ const payrollSchema: Schema<IPayroll> = new Schema({
     type: Number, 
     default: 0 
   },
-
-
-  // Payment status and method
   paymentStatus: { 
     type: String, 
     enum: ['Pending', 'Paid','Overdue'], 
@@ -68,6 +62,7 @@ const payrollSchema: Schema<IPayroll> = new Schema({
     default: 'Direct Deposit' 
   },
 });
+
 
 // Export the Payroll model
 const Payroll = mongoose.model<IPayroll>('Payroll', payrollSchema);

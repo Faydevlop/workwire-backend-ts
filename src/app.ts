@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
+import './modules/PayrollManagement/config/cronJobs'
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
