@@ -9,6 +9,9 @@ interface ILeave extends Document {
   status: string;
   reason: string;
   createdAt: Date;
+  monthlyLeaveCount:number;
+  lastResetDate:Date;
+  comment:string;
 }
 
 // Create the Leave schema
@@ -34,6 +37,18 @@ const LeaveSchema: Schema<ILeave> = new Schema({
     type: String,
     enum: ['Pending', 'Approved', 'Rejected'], // Example status values
     default:'Pending'
+  },
+  monthlyLeaveCount: {
+    type: Number,
+    default: 0, // Initial leave count is 0
+  },
+  lastResetDate: {
+    type: Date,
+    default: Date.now, // Initialize with the current date
+  },
+  comment: {
+    type: String, // Field to store admin's comment
+    default: '', // Default is an empty string if no comment is provided
   },
   reason: {
     type: String,

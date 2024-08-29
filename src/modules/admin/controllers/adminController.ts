@@ -95,7 +95,7 @@ export const AddUser = async (
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const allUsers = await User.find();
+    const allUsers = await User.find().populate('department')
     if (!allUsers) {
       res.status(400).json({ message: "Users collection is empty" });
       return;

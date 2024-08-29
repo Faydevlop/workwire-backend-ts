@@ -29,6 +29,26 @@ export const createLeave = async(req:Request,res:Response)=>{
             return res.status(409).json({message:'Yor already have a leave applied during these dates'})
           }
 
+          const lastLeave = await Leave.findOne({ userId }).sort({ createdAt: -1 });
+
+          if (lastLeave) {
+              // Reset the monthly leave count if the month has changed
+              const now = new Date();
+              if (lastLeave.lastResetDate.getMonth() !== now.getMonth()) {
+                  lastLeave.monthlyLeaveCount = 0;
+                  lastLeave.lastResetDate = now;
+              }
+  
+              // Check if the employee has reached the monthly leave limit
+              if (lastLeave.monthlyLeaveCount >= 4) { // Assuming a limit of 4 leaves per month
+                  return res.status(403).json({ message: 'You have reached your leave limit for this month' });
+              }
+  
+              lastLeave.monthlyLeaveCount += 1;
+              await lastLeave.save();
+          }
+  
+
           
 
           const newLeave = new Leave({
@@ -37,7 +57,9 @@ export const createLeave = async(req:Request,res:Response)=>{
             startDate:new Date(startDate),
             endDate:new Date(endDate),
             reason,
-            createdAt:new Date()
+            createdAt:new Date(),
+            monthlyLeaveCount:lastLeave ? lastLeave.monthlyLeaveCount : 1,
+            lastResetDate:lastLeave ? lastLeave.lastResetDate : new Date
           })
          
 
@@ -114,7 +136,7 @@ export const listdetails = async(req:Request,res:Response):Promise<void>=>{
 }
 
 export const changeStatus = async(req:Request,res:Response):Promise<void>=>{
-  const {action,userId} = req.body;
+  const {action,userId,comment} = req.body;
   const {leaveId} = req.params;
   console.log('status change request is here');
   console.log(leaveId);
@@ -132,11 +154,15 @@ export const changeStatus = async(req:Request,res:Response):Promise<void>=>{
   if (action === 'Approved') {
     userLeave.status = 'Approved';
   } else if (action === 'Rejected') {
+    userLeave.comment = comment || '';
+    userLeave.monthlyLeaveCount -= 1
     userLeave.status = 'Rejected';
   } else {
     res.status(400).json({ message: 'Invalid action.' });
     return;
   }
+
+  
 
   await userLeave.save();
 
