@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import Leave from "../models/leaveModel"
 import User from "../../employee/models/userModel";
+import Department from "../../Department/model/departmentModel";
 
 export const createLeave = async(req:Request,res:Response)=>{
     console.log('1');
@@ -222,4 +223,35 @@ try {
 
 
 }
+
+export const managerLeaveMng = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { managerId } = req.params;
+    console.log('request is here');
+
+    const managerDetails = await User.findById(managerId);
+    if (!managerDetails) {
+      res.status(404).json({ message: 'Manager not found' });
+      return;
+    }
+
+    const managerDepId = managerDetails.department;
+    const users = await User.find({ department: managerDepId, position: 'Employee' });
+    
+    if (!users || users.length === 0) {
+      res.status(400).json({ message: 'No Users Found' });
+      return;
+    }
+
+    const userIds = users.map(user => user._id); // Collect all user IDs
+    const leaves = await Leave.find({ userId: { $in: userIds } }).populate('userId') // Find leaves for all users
+
+    res.status(200).json({ leaves });
+    
+  } catch (error) {
+    console.error(error); // Log the error
+    res.status(500).json({ message: 'Server Error' });
+  }
+}
+
 

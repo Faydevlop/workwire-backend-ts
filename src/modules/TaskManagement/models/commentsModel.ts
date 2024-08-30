@@ -2,12 +2,14 @@ import mongoose, { Document, Schema } from "mongoose";
 
 interface IComments extends Document{
     commentedBy:mongoose.Schema.Types.ObjectId;
-    comments:string;
+    comment:string;
     timestamp:Date
+    taskId:mongoose.Schema.Types.ObjectId;
 }
 
 const TaskSchema: Schema = new Schema({
     commentedBy:{ type: Schema.Types.ObjectId, ref: "User", required: true },
+    taskId:{ type: Schema.Types.ObjectId, ref: "Tasks", required: true },
     comment:{
         type: String,
         required: true

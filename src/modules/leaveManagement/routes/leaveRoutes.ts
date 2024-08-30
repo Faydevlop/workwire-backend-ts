@@ -1,5 +1,5 @@
 import express , {Router} from 'express'
-import { changeStatus, createLeave, leavepageListingdatas, listdetails, listingLeaves, listingleavesforUser } from '../controllers/leaveController';
+import { changeStatus, createLeave, leavepageListingdatas, listdetails, listingLeaves, listingleavesforUser, managerLeaveMng } from '../controllers/leaveController';
 
 const router:Router = express.Router();
 
@@ -15,5 +15,7 @@ router.post('/status/:leaveId',changeStatus)
 router.get('/listdata',leavepageListingdatas)
 // list deatils of leave request
 router.get('/getdetails/:leaveId',listdetails);
+// leave management for manager to manage leave requests of the employees
+router.get('/managerleaveget/:managerId',managerLeaveMng)
 
 export default router

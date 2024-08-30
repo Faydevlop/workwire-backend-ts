@@ -17,14 +17,7 @@ export const CreateTask = async(req:Request,res:Response):Promise<void>=>{
             dueDate,
             description
         } = req.body;
-        console.log(ProjectId,taskTitle,
-            status,
-            assignedTo,
-            priority,
-            startDate,
-            dueDate,
-            description);
-        
+      
 
     try {
 
@@ -99,5 +92,23 @@ export const taskdetails = async(req:Request,res:Response):Promise<void>=>{
 
     } catch (error) {
         res.status(500).json({ message: error});
+    }
+}
+
+export const listTasks = async(req:Request,res:Response):Promise<void>=>{
+    try {
+        const {employeeId} = req.params;
+
+        // Find tasks where the employee is assigned
+        const tasks = await Task.find({ assignedTo: employeeId })
+            .populate('projectId')   // Populate project details if needed
+            .populate('assignedTo')   // Populate user details if needed
+            .populate('comments');    // Populate comments details if needed
+
+        // Send the tasks as a response
+        res.status(200).json(tasks);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error', error });
     }
 }

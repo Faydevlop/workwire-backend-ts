@@ -13,6 +13,7 @@ import LeaveRoute from './modules/leaveManagement/routes/leaveRoutes'
 import Department from './modules/Department/routes/departmentRoutes'
 import TaskRoute from './modules/TaskManagement/routes/taskRoute'
 import payroll from './modules/PayrollManagement/routes/payrollRoute'
+import comment from './modules/TaskManagement/routes/commentRoute'
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/leave',LeaveRoute)
 app.use('/department',Department)
 app.use('/task',TaskRoute)
 app.use('/payroll',payroll)
+app.use('/comment',comment)
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
