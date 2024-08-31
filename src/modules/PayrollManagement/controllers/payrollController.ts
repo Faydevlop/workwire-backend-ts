@@ -291,3 +291,40 @@ export const addPay = async(req:Request,res:Response)=>{
         res.status(500).json({ message: "Server error",error });
     }
 }
+
+export const hrlisting = async(req:Request,res:Response):Promise<void>=>{
+    try {
+        const allpayrolldata = await Payroll.find().populate('employee')
+
+        if(!allpayrolldata){
+            res.status(400).json({message:"no payroll exist"})
+            return
+        }
+
+        res.status(200).json({payroll:allpayrolldata})
+        
+    } catch (error) {
+        
+    }
+}
+
+export const listdataspecific = async(req:Request,res:Response):Promise<void>=>{
+    try {
+        console.log('req is here');
+        
+
+        const {userId} = req.params;
+
+        const payrolldata = await Payroll.findOne({employee:userId})
+
+        if(!payrolldata){
+            res.status(400).json({message:'no Payroll data found'})
+            return
+        }
+        
+        res.status(200).json({payroll:payrolldata})
+        
+    } catch (error) {
+        
+    }
+}

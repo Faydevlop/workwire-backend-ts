@@ -1,5 +1,5 @@
 import express , {Router} from 'express'
-import { addPay, AddPayroll, listallUsers, listDepartmetentwise, listEmployee, listspecificId, showUser, UpdatePaymentStatus } from '../controllers/payrollController';
+import { addPay, AddPayroll, hrlisting, listallUsers, listdataspecific, listDepartmetentwise, listEmployee, listspecificId, showUser, UpdatePaymentStatus } from '../controllers/payrollController';
 
 const router:Router = express.Router();
 // adding payroll
@@ -20,6 +20,10 @@ router.get('/showdata/:userId',showUser)
 router.post('/addpay/:payrollId',addPay)
 // update status of the payment
 router.post('/updatestatus',UpdatePaymentStatus)
+// payroll listing for hr 
+router.get('/hrlist',hrlisting)
+// listing data based on the User id
+router.get('/userlist/:userId',listdataspecific)
 
 
 export default router
