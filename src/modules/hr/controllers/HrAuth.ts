@@ -40,7 +40,7 @@ export const HrLogin = async(req:Request<{},{},HrLoginBody>,res:Response):Promis
         expiresIn:'1d'
     })
     
-    res.status(200).json({token,manager:user})
+    res.status(200).json({token,hr:user})
     } catch (error) {
         console.log(error);
         res.status(500).json({error:'An error occured during login'})

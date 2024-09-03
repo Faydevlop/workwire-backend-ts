@@ -115,7 +115,7 @@ export const nextmeet = async (req: Request, res: Response): Promise<void> => {
       $or: [
         {
           date: { $gt: currentDate },  // Meetings after today
-          status: 'scheduled',
+          
         },
         {
           date: currentDate,
@@ -126,7 +126,7 @@ export const nextmeet = async (req: Request, res: Response): Promise<void> => {
     })
     .sort({ date: 1, time: 1 })  // Sort by date and then by time
 
-    console.log('Upcoming Meetings:', upcomingMeetings);
+    
 
     if (upcomingMeetings.length === 0) {
       res.status(400).json({ message: 'No upcoming meetings found' });
@@ -159,6 +159,113 @@ export const meetinglist = async(req:Request,res:Response):Promise<void>=>{
 
         
     } catch (error) {
-        
+      res.status(500).json({ message: 'Internal server error' });
     }
 }
+
+export const listforEdit = async(req:Request,res:Response):Promise<void>=>{
+  console.log('list req is here');
+  
+  try {
+
+    const {meetingId} = req.params
+
+    const meetdetails = await Meeting.findById(meetingId)
+
+    if(!meetdetails){
+      res.status(400).json({message:'meeting details not found'})
+      return
+    }
+
+    res.status(200).json({meetingData:meetdetails})
+
+    
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+
+
+export const updateMeeting = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { meetId } = req.params;
+    const { meetingName, date, participants, meetingLink, topic, time } = req.body;
+
+    // Fetch the existing meeting details
+    const existingMeeting = await Meeting.findById(meetId);
+
+    if (!existingMeeting) {
+      res.status(404).json({ message: 'Meeting not found' });
+      return;
+    }
+
+    // Create an object to store the fields to update
+    const updatedFields: any = {
+      meetingName,
+      date,
+      meetingLink,
+      topic,
+      time,
+    };
+
+    // Only update participants if new participants are provided
+    if (participants && participants.length > 0) {
+      updatedFields.participants = participants;
+    }
+
+    // Update the meeting details
+    const updatedMeeting = await Meeting.findByIdAndUpdate(
+      meetId,
+      updatedFields,
+      { new: true } // return the updated document
+    );
+
+    res.status(200).json({ message: 'Meeting updated successfully', meetingData: updatedMeeting });
+  } catch (error) {
+    console.error('Error updating meeting:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const listingallUser = async(req:Request,res:Response):Promise<void>=>{
+  try {
+
+    const allUser = await User.find();
+
+    if(!allUser){
+      res.status(400).json({message:'no users found'});
+      return
+    }
+
+    res.status(200).json({users:allUser})
+    
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+export const includedMeetingList = async(req:Request,res:Response):Promise<void>=>{
+  try {
+    const {userId} = req.params
+
+    const meetings = await Meeting.find({
+      $or: [
+        { createdBy: userId },
+        { participants: { $in: [userId] } }
+      ]
+    });
+    
+
+    if(!meetings){
+      res.status(400).json({message:'Not Meetings Found'});
+      return
+    }
+
+    res.status(200).json({meetings})
+    
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
