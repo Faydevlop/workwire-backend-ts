@@ -16,6 +16,7 @@ import TaskRoute from './modules/TaskManagement/routes/taskRoute'
 import payroll from './modules/PayrollManagement/routes/payrollRoute'
 import comment from './modules/TaskManagement/routes/commentRoute'
 import meeting from './modules/meetings/routes/MeetingRoutes'
+import jobs from './modules/recruitment/routes/reqruitmentRoutes'
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/task',TaskRoute)
 app.use('/payroll',payroll)
 app.use('/comment',comment)
 app.use('/meeting',meeting)
+app.use('/jobs',jobs)
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
