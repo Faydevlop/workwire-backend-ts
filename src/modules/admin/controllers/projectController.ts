@@ -26,11 +26,7 @@ export const addNewProject = async (
   
 
   try {
-   
 
-    
-
-    
 
     const newProject = new project({
       name,

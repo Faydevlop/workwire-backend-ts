@@ -1,5 +1,6 @@
 import { Request,Response } from "express";
 import Job from "../model/recruitementMode";
+import JobReferral from "../model/JobReferral";
 
 
 // Define the job post data interface
@@ -80,7 +81,7 @@ interface JobPostData {
 export const listrquirements = async(req:Request,res:Response):Promise<void>=>{
     try {
         
-        const listingReq = await Job.find();
+        const listingReq = await Job.find()
 
         if(!listingReq){
             res.status(400).json({message:'No Job Listing found'})
@@ -112,3 +113,70 @@ export const deleteItem = async(req:Request,res:Response):Promise<void>=>{
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
+
+export const referJob = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { name, email, phone, address, qualifications, portfolio, referer,jobId } = req.body;
+      const resumeUrl = (req.file as any)?.path; // Cloudinary file URL
+  
+      console.log('Resume URL:', resumeUrl);
+  
+      // Create a new job referral entry in the database
+      const jobReferral = new JobReferral({
+        name,
+        email,
+        phone,
+        address,
+        qualifications,
+        portfolio,
+        referer,
+        resume: resumeUrl,
+        jobId
+      });
+  
+      await jobReferral.save();
+  
+      res.status(200).json({
+        message: 'Job referred successfully'
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Error referring job', error });
+    }
+  };
+
+  export const listIReq = async(req:Request,res:Response):Promise<void>=>{
+    try {
+
+        const listData = await JobReferral.find().populate('referer').populate('jobId')
+
+        if(!listData){
+            res.status(400).json({message:"No Job Listing found"})
+            return
+        }
+        // console.log('here is the data',listData);
+        
+
+        res.status(200).json({listData})
+        
+    } catch (error) {
+        res.status(500).json({ message: 'Error listing job', error });
+    }
+  }
+
+  export const listspecific = async(req:Request,res:Response):Promise<void>=>{
+    try {
+        const {reqId} = req.params;
+
+        const listDetail = await JobReferral.findById(reqId).populate('jobId').populate('referer')
+        if(!listDetail){
+            res.status(400).json({message:'No data found'})
+            return
+        }
+
+        res.status(200).json({listDetail})
+
+
+    } catch (error) {
+        res.status(500).json({ message: 'Error listing job', error });
+    }
+  }
