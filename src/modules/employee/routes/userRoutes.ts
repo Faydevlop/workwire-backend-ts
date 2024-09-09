@@ -5,7 +5,7 @@ import {
   resetPassRequest,
   updateProfile,
 } from "../controllers/employeeController";
-import upload from "../middlewares/profileUpload";
+import upload from "../middlewares/upload";
 import { protect } from "../../../middlewares/jwtMiddleware";
 // import { updatePicture } from '../controllers/employeeController';
 

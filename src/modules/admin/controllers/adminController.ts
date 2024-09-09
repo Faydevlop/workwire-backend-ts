@@ -72,6 +72,7 @@ export const AddUser = async (
       phone,
       gender,
       address,
+      profileImageUrl:`https://i.pinimg.com/564x/00/80/ee/0080eeaeaa2f2fba77af3e1efeade565.jpg`,
       // department,
       position,
       dateOfJoining,

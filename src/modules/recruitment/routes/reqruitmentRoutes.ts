@@ -1,5 +1,5 @@
 import express , {Router} from 'express'
-import { createRecruitment, deleteItem, listIReq, listrquirements, listspecific, referJob } from '../controller/requirementController';
+import { createRecruitment, deleteItem, deleteJobapplications, getUserData, listIReq, listrquirements, listspecific, referJob, updataJonlist } from '../controller/requirementController';
 import upload from '../middlewares/upload'
 const router:Router = express.Router();
 
@@ -15,7 +15,12 @@ router.post('/referjob',upload.single('resume'),referJob)
 router.get('/listJob',listIReq) 
 // listing sepecific details of the req details
 router.get('/listDetails/:reqId',listspecific)
-
+// delete job applications 
+router.delete('/deleteapplication/:applicationId',deleteJobapplications)
+// listing data for edit form
+router.get('/getdata/:jobId',getUserData)
+// update job listing data form - post
+router.put('/update/:jobId',updataJonlist)
 
 
 

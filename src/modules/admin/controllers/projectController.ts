@@ -171,8 +171,25 @@ export const projectlisting = async(req:Request,res:Response):Promise<void>=>{
     res.status(200).json({projectDetails,tasks});
     
   } catch (error) {
-    
+    res.status(500).json({ error: "Server error" });
   }
 }
 
+export const listTasks = async (req:Request,res:Response):Promise<void>=>{
+  try {
+
+    const {projectId} = req.params;
+
+    const tasks = await taskModel.find({projectId:projectId})
+
+    if(!tasks){
+      res.status(400).json({message:'no tasks found'})
+      return
+    }
+    
+    res.status(200).json({tasks})
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+}
 

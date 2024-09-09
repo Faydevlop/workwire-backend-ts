@@ -22,6 +22,7 @@ import {
   editProject,
   getprojectdetails,
   listProjects,
+  listTasks,
   projectlisting,
 } from "../controllers/projectController";
 
@@ -59,6 +60,7 @@ router.post("/editproject/:projectId",protect, editProject);
 router.post("/deleteproject/:projectId",deleteProject)
 // project listing in tasks
 router.get('/projectlist/:managerId',projectlisting)
-// admin logout
+// admin project wise task listing
+router.get('/listtask/:projectId',listTasks)
 
 export default router;

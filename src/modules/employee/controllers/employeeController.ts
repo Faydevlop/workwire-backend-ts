@@ -28,8 +28,12 @@ export const updateProfile = async (
 
     // Update profile image if it exists
     if (req.file) {
-      const relativePath = path.join("uploads", req.file.filename); // Create relative path
-      user.profileImageUrl = relativePath; // Save relative path to the database
+      // Cloudinary will have already handled the upload at this point
+      // The URL of the uploaded image is available in `req.file.path` (after multer processes it)
+      const uploadedImageUrl = req.file.path;
+      
+      // Save the Cloudinary URL to the user's profile image field
+      user.profileImageUrl = uploadedImageUrl;
     }
 
     const updatedUser = await user.save();

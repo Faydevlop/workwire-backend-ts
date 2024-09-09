@@ -328,3 +328,22 @@ export const listdataspecific = async(req:Request,res:Response):Promise<void>=>{
         
     }
 }
+
+export const listViewdata = async(req:Request,res:Response):Promise<void>=>{
+    try {
+
+        const totalUser = await User.find()
+        const totalUsernotpayroll = await User.find({payroll:null})
+
+        const listView = {
+            totalUser:totalUser.length,
+            nopayrollUser:totalUsernotpayroll.length
+        }
+
+        res.status(200).json({listView})
+
+        
+    } catch (error) {
+        
+    }
+}

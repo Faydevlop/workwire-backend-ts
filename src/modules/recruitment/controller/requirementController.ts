@@ -163,7 +163,7 @@ export const referJob = async (req: Request, res: Response): Promise<void> => {
     }
   }
 
-  export const listspecific = async(req:Request,res:Response):Promise<void>=>{
+  export const  listspecific = async(req:Request,res:Response):Promise<void>=>{
     try {
         const {reqId} = req.params;
 
@@ -178,5 +178,88 @@ export const referJob = async (req: Request, res: Response): Promise<void> => {
 
     } catch (error) {
         res.status(500).json({ message: 'Error listing job', error });
+    }
+  }
+
+  export const deleteJobapplications = async(req:Request,res:Response):Promise<void>=>{
+    try {
+
+        const {applicationId} = req.params;
+        console.log('delete req is here');
+        
+        const applicationdata = await JobReferral.findByIdAndDelete(applicationId);
+
+        if(!applicationdata){
+            res.status(400).json({message:'no application found'})
+            return
+        }
+
+        res.status(200).json({message:'application deleted successfully'});
+        
+        
+    } catch (error) {
+        
+    }
+  }
+
+  export const getUserData = async(req:Request,res:Response):Promise<void>=>{
+    try {
+
+        const {jobId} = req.params;
+
+        const listingdata = await Job.findById(jobId);
+
+        if(!listingdata){
+            res.status(400).json({message:'listig data not found'})
+            return
+        }
+
+        res.status(200).json({listdata:listingdata})
+        
+    } catch (error) {
+        
+    }
+  }
+
+  export const updataJonlist = async(req:Request,res:Response):Promise<void>=>{
+    try {
+        const {jobId} = req.params;
+        const { id, jobTitle, role, department, jobDescription, requirements, responsibilities, location, employmentType, salaryRange, applicationProcess, contactEmail, contactPhone, applicationDeadline, eligibility } = req.body;
+
+        if (!jobId) {
+            res.status(400).json({ message: 'Job ID is required' });
+            return;
+        }
+
+        const updatedJob = await Job.findByIdAndUpdate(
+            jobId,
+            {
+                jobTitle,
+                role,
+                department,
+                jobDescription,
+                requirements,
+                responsibilities,
+                location,
+                employmentType,
+                salaryRange,
+                applicationProcess,
+                contactEmail,
+                contactPhone,
+                applicationDeadline,
+                eligibility
+            },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedJob) {
+            res.status(404).json({ message: 'Job not found' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Job updated successfully', job: updatedJob });
+    } catch (error) {
+        console.error('Error updating job:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
   }
