@@ -52,7 +52,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 
-mongoose.connect(process.env.MONGO_URI!)
+mongoose.connect(process.env.MONGO_URI!,{
+  serverSelectionTimeoutMS: 50000 // Increase timeout
+})
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
