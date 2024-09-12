@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 dotenv.config();
 import './modules/PayrollManagement/config/cronJobs'
 import './modules/meetings/cronjob/meeting-cron'
@@ -17,12 +18,19 @@ import payroll from './modules/PayrollManagement/routes/payrollRoute'
 import comment from './modules/TaskManagement/routes/commentRoute'
 import meeting from './modules/meetings/routes/MeetingRoutes'
 import jobs from './modules/recruitment/routes/reqruitmentRoutes'
+import { refreshToken } from './auth/authRoute/authRoute';
 
 const app = express();
 
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true // Allow cookies to be sent
+}));
+
+app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -38,6 +46,7 @@ app.use('/payroll',payroll)
 app.use('/comment',comment)
 app.use('/meeting',meeting)
 app.use('/jobs',jobs)
+app.post('/refresh-token', refreshToken);
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

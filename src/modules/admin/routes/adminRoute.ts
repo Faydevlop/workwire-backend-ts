@@ -40,22 +40,22 @@ router.post("/adduser",protect, AddUser);
 // Getting all the user Data
 router.get("/getusers",protect, getAllUsers);
 // get detials of specific user
-router.get("/getuser/:userId",protect, getSpecificUser);
+router.get("/getuser/:userId", getSpecificUser);
 // update user data
-router.put("/updateuser/:userId",protect, updateUser);
+router.put("/updateuser/:userId", updateUser);
 // delete a specific user
-router.delete("/deleteuser/:userId",protect, deleteUser);
+router.delete("/deleteuser/:userId", deleteUser);
 // get managers and employees
 // router.get("/getmanagers",protect, getAllmanager);
 // router.get("/getUnassignedemployees",protect, getAvilableempo);
 // post for creating new project
 router.post("/addNewProject",protect, addNewProject);
 // get for project listing
-router.get("/getprojects",protect, listProjects);
+router.get("/getprojects", listProjects);
 // geting specific project details
-router.get("/project/:projectId",protect, getprojectdetails);
+router.get("/project/:projectId", getprojectdetails);
 // edting project
-router.post("/editproject/:projectId",protect, editProject);
+router.post("/editproject/:projectId", editProject);
 // delete project
 router.post("/deleteproject/:projectId",deleteProject)
 // project listing in tasks

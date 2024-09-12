@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import Admin from "../models/adminModel";
+import { generateAccessToken, generateRefreshToken } from '../../../middlewares/jwt';
 
 
 // defining interfaces for request body
@@ -40,11 +41,16 @@ export const adminSignup = async (
 
     await newAdmin.save();
 
-    const token = jwt.sign({ userId: newAdmin._id }, process.env.JWT_SECRET!, {
-      expiresIn: "1d",
-    });
+    const accessToken = generateAccessToken(newAdmin._id);  // Corrected here
+    console.log('accessToken is here',accessToken);
+    
+    const refreshToken = jwt.sign(
+      { userId: newAdmin._id },
+      process.env.JWT_REFRESH_SECRET! || 'workwise', 
+      { expiresIn: '7d' }
+    );
 
-    res.status(201).json({ token, admin: newAdmin });
+    res.status(201).json({ accessToken,refreshToken, admin: newAdmin });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -73,11 +79,18 @@ export const adminLogin = async (
       return;
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
-      expiresIn: "1d",
-    });
+    const accessToken = generateAccessToken(user._id);  // Corrected here
+    
+    
+    const refreshToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_REFRESH_SECRET! || 'workwise', 
+      { expiresIn: '7d' }
+    );
 
-    res.status(200).json({ token, admin: user });
+    // Set refresh token in HTTP-only cookie
+  
+    res.status(200).json({ accessToken,refreshToken, admin: user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred during login" });
