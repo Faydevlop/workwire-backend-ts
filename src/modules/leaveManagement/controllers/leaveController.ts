@@ -3,79 +3,144 @@ import Leave from "../models/leaveModel"
 import User from "../../employee/models/userModel";
 import Department from "../../Department/model/departmentModel";
 
-export const createLeave = async(req:Request,res:Response)=>{
-    console.log('1');
-    
-    try {
-        const {userId,leaveType,startDate,endDate,reason} = req.body;
-        
-        if (!userId || !leaveType || !startDate || !endDate || !reason) {
-          res.status(400).json({ message: "All fields are required." });
-          return 
-            
-          }
+import nodemailer from "nodemailer";
+import Admin from "../../admin/models/adminModel";
 
-          const end = new Date (startDate);
-          const start = new Date (endDate)
+// Email configuration
+const transporter = nodemailer.createTransport({
+  service: 'gmail', 
+  auth: {
+    user: process.env.EMAIL, 
+    pass: process.env.EMAILPASS,
+  },
+});
 
-          const existLeave = await Leave.findOne({userId,
-            $or:[
-              {
-                startDate:{$lte:end},
-                endDate:{$gte:start}
-              }
-            ]
-          })
-          if(existLeave){
-            return res.status(409).json({message:'Yor already have a leave applied during these dates'})
-          }
-
-          const lastLeave = await Leave.findOne({ userId }).sort({ createdAt: -1 });
-
-          if (lastLeave) {
-              // Reset the monthly leave count if the month has changed
-              const now = new Date();
-              if (lastLeave.lastResetDate.getMonth() !== now.getMonth()) {
-                  lastLeave.monthlyLeaveCount = 0;
-                  lastLeave.lastResetDate = now;
-              }
+export const createLeave = async (req: Request, res: Response) => {
+  console.log('1');
   
-              // Check if the employee has reached the monthly leave limit
-              if (lastLeave.monthlyLeaveCount >= 4) { // Assuming a limit of 4 leaves per month
-                  return res.status(403).json({ message: 'You have reached your leave limit for this month' });
-              }
-  
-              lastLeave.monthlyLeaveCount += 1;
-              await lastLeave.save();
-          }
-  
+  try {
+    const { userId, leaveType, startDate, endDate, reason } = req.body;
 
-          
-
-          const newLeave = new Leave({
-            userId:userId,
-            leaveType,
-            startDate:new Date(startDate),
-            endDate:new Date(endDate),
-            reason,
-            createdAt:new Date(),
-            monthlyLeaveCount:lastLeave ? lastLeave.monthlyLeaveCount : 1,
-            lastResetDate:lastLeave ? lastLeave.lastResetDate : new Date
-          })
-         
-
-          const savedLeave = await newLeave.save()
-          return res.status(201).json({
-            message: "Leave request created successfully.",
-          });
-        
-
-    } catch (error) {
-        console.log('error',error);
-        res.status(500).json({message:'Server error. Please try again later'})
-        
+    if (!userId || !leaveType || !startDate || !endDate || !reason) {
+      return res.status(400).json({ message: "All fields are required." });
     }
-}
+
+    const end = new Date(startDate);
+    const start = new Date(endDate);
+
+    const existLeave = await Leave.findOne({
+      userId,
+      $or: [
+        {
+          startDate: { $lte: end },
+          endDate: { $gte: start },
+        },
+      ],
+    });
+
+    if (existLeave) {
+      return res.status(409).json({ message: 'You already have a leave applied during these dates' });
+    }
+
+    const lastLeave = await Leave.findOne({ userId }).sort({ createdAt: -1 });
+
+    if (lastLeave) {
+      const now = new Date();
+      if (lastLeave.lastResetDate.getMonth() !== now.getMonth()) {
+        lastLeave.monthlyLeaveCount = 0;
+        lastLeave.lastResetDate = now;
+      }
+
+      if (lastLeave.monthlyLeaveCount >= 4) {
+        return res.status(403).json({ message: 'You have reached your leave limit for this month' });
+      }
+
+      lastLeave.monthlyLeaveCount += 1;
+      await lastLeave.save();
+    }
+
+    const newLeave = new Leave({
+      userId: userId,
+      leaveType,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      reason,
+      createdAt: new Date(),
+      monthlyLeaveCount: lastLeave ? lastLeave.monthlyLeaveCount : 1,
+      lastResetDate: lastLeave ? lastLeave.lastResetDate : new Date(),
+    });
+
+    const userdata = await User.findById(userId)
+
+    const savedLeave = await newLeave.save();
+
+     // Retrieve admin emails
+     const admins = await Admin.find({}, 'email');
+     const adminEmails = admins.map(admin => admin.email);
+ 
+     // Retrieve HR emails
+     const hrUsers = await User.find({position:'HR'}) // Assuming there's an HR model
+     const hrEmails = hrUsers.map(hr => hr.email);
+ 
+     // Combine admin and HR emails
+     const recipients = [...adminEmails, ...hrEmails]; 
+ 
+     if (recipients.length === 0) {
+       console.log('No admin or HR emails found.');
+       return res.status(201).json({
+         message: "Leave request created successfully, but no admin or HR emails found.",
+       });
+     }
+ 
+
+    // Send email notification
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: recipients, // Change this to the recipient's email
+      subject: `Leave Request from ${userdata?.firstName}${userdata?.lastName}`,
+      text: `
+Dear HR/Admin Team,
+
+I hope this message finds you well.
+
+Please be informed that a new leave request has been submitted with the following details:
+
+- **Employee Name**: ${userdata?.firstName} ${userdata?.lastName}
+- **Position**: ${userdata?.position}
+- **Employee ID**: ${userId}
+- **Leave Type**: ${leaveType}
+- **Start Date**: ${startDate}
+- **End Date**: ${endDate}
+- **Reason for Leave**: ${reason}
+
+Kindly review this request and proceed with the necessary actions.
+
+Thank you for your attention to this matter.
+
+Best regards,  
+${userdata?.firstName} ${userdata?.lastName}
+`
+
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log('Error sending email:', error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+
+    return res.status(201).json({
+      message: "Leave request created successfully and email sent.",
+    });
+    
+  } catch (error) {
+    console.log('error', error);
+    return res.status(500).json({ message: 'Server error. Please try again later.' });
+  }
+};
+
 
 
 export const listingLeaves = async (req:Request,res:Response):Promise<void>=>{
