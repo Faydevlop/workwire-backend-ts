@@ -3,6 +3,10 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../../employee/models/userModel";
 import { generateAccessToken } from "../../../middlewares/jwt";
+import projectModel from "../../admin/models/projectModel";
+import Leave from "../../leaveManagement/models/leaveModel";
+import { Meeting } from "../../meetings/model/MeetingModal";
+import taskModel from "../../TaskManagement/models/taskModel";
 
 
 interface managerLoginBody{
@@ -64,4 +68,51 @@ res.status(200).json({accessToken,manager:user})
 
 
 
+}
+
+
+export const ManagerDashboard = async(req:Request,res:Response):Promise<void>=>{
+    try {
+
+        const { managerId } = req.params;
+    console.log('request is here');
+
+    const managerDetails = await User.findById(managerId);
+    if (!managerDetails) {
+      res.status(404).json({ message: 'Manager not found' });
+      return;
+    }
+
+    const managerDepId = managerDetails.department;
+    const users = await User.find({ department: managerDepId, position: 'Employee' });
+    
+    if (!users || users.length === 0) {
+      res.status(400).json({ message: 'No Users Found' });
+      return;
+    }
+
+    const userIds = users.map(user => user._id); // Collect all user IDs
+    const leaves = await Leave.find({ userId: { $in: userIds } }).populate('userId') // Find leaves for all users
+
+
+    const upcomingMeetings = await Meeting.find({
+        
+        createdBy:managerId,
+
+        date: { $gte: new Date() }, // Filter by future meetings
+        status: 'scheduled'
+      });
+
+
+      const projects = await projectModel.find({department:managerDepId})
+
+
+
+
+    res.status(200).json({leaves,upcomingMeetings,projects,})
+        
+    } catch (error) {
+        console.log(error);
+    res.status(500).json({error:'An error occured during login'})
+    }
 }

@@ -3,6 +3,9 @@ import cookieParser from 'cookie-parser';
 dotenv.config();
 import './modules/PayrollManagement/config/cronJobs'
 import './modules/meetings/cronjob/meeting-cron'
+import { Server } from 'socket.io';
+import http from 'http';
+
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -19,8 +22,12 @@ import comment from './modules/TaskManagement/routes/commentRoute'
 import meeting from './modules/meetings/routes/MeetingRoutes'
 import jobs from './modules/recruitment/routes/reqruitmentRoutes'
 import { refreshToken } from './auth/authRoute/authRoute';
+import Message from './modules/chat/chatModel';
+import chat from './modules/chat/chatRoutes'
+import notification from './modules/notification/routes/notificaitoRoutes'
 
 const app = express();
+const server = http.createServer(app)
 
 
 app.use(express.json());
@@ -46,7 +53,10 @@ app.use('/payroll',payroll)
 app.use('/comment',comment)
 app.use('/meeting',meeting)
 app.use('/jobs',jobs)
+app.use('/chat',chat)
 app.post('/refresh-token', refreshToken);
+app.use('/notifications', notification);
+
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -60,6 +70,45 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send('Something broke!');
 });
 
+const io = new Server(server,{
+  cors:{
+    origin:process.env.FRONTENDAPI,
+    methods:['GET','POST']
+  }
+})
+
+  io.on('connection',(socket)=>{
+    // console.log('a user connected',socket.id);
+
+    socket.on('message',async(data)=>{
+      console.log('message from client',data);  
+
+      const newMessage = new Message({
+        sender:data.sender,
+        receiver:data.receiver,
+        content:data.content,
+        timestamp:new Date()
+      })
+
+      await newMessage.save()
+
+
+      io.emit('message',data)
+      
+    })
+
+
+
+    
+
+    // handle disconnect
+    socket.on('disconnect',()=>{
+      console.log('user disconnected',socket.id);
+      
+    })
+
+  })
+
 
 mongoose.connect(process.env.MONGO_URI!,{
   serverSelectionTimeoutMS: 50000 // Increase timeout
@@ -69,6 +118,6 @@ mongoose.connect(process.env.MONGO_URI!,{
 
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });

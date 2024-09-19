@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import { employeeLogin } from "../controllers/employeeAuth";
 import {
   ChangePassword,
+  dashboardData,
   resetPassRequest,
   updateProfile,
 } from "../controllers/employeeController";
@@ -23,5 +24,7 @@ router.put(
 router.post("/reqest-reset-password/:userId", resetPassRequest);
 // update password
 router.post("/reset-password", ChangePassword);
+// employee dashboard data
+router.get('/dashboard/:userId',dashboardData)
 
 export default router;

@@ -3,6 +3,9 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../../employee/models/userModel";
 import { generateAccessToken } from "../../../middlewares/jwt";
+import JobReferral from "../../recruitment/model/JobReferral";
+import { Meeting } from "../../meetings/model/MeetingModal";
+import Leave from "../../leaveManagement/models/leaveModel";
 
 interface  HrLoginBody{
     email:string;
@@ -58,6 +61,30 @@ export const HrLogin = async(req:Request<{},{},HrLoginBody>,res:Response):Promis
         console.log(error);
         res.status(500).json({error:'An error occured during login'})
         
+        
+    }
+}
+
+ export const hrDashboard = async(req:Request,res:Response):Promise<void>=>{
+    try {
+
+        const {userId} = req.params
+
+        const pendingReqeusts = await JobReferral.find({status:'pending'});
+
+        const upcomingMeetings = await Meeting.find({
+            createdBy: userId,
+            date: { $gte: new Date() }, // Filter by future meetings
+            status: 'scheduled'
+          });
+
+        const leaves = await Leave.find({status:'Pending'}).populate('userId')
+
+        res.status(200).json({pendingReqeusts,upcomingMeetings,leaves})
+
+
+        
+    } catch (error) {
         
     }
 }

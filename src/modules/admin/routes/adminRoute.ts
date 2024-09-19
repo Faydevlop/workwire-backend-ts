@@ -10,6 +10,7 @@ import { protect } from "../../../middlewares/jwtMiddleware";
 
 import {
   AddUser,
+  adminDashboard,
   deleteUser,
   getAllUsers,
   getSpecificUser,
@@ -62,5 +63,7 @@ router.post("/deleteproject/:projectId",deleteProject)
 router.get('/projectlist/:managerId',projectlisting)
 // admin project wise task listing
 router.get('/listtask/:projectId',listTasks)
+// admin dashboard 
+router.get('/dashboard',adminDashboard)
 
 export default router;

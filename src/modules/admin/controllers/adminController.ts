@@ -4,6 +4,10 @@ import { Request, Response } from "express";
 import User from "../../employee/models/userModel";
 
 import sendVerificationmail from "../middlewares/mailVerification";
+import Leave from "../../leaveManagement/models/leaveModel";
+import Department from "../../Department/model/departmentModel";
+import Payroll from "../../PayrollManagement/models/payrollModel";
+import projectModel from "../models/projectModel";
 
 interface AddUserBody {
   firstName: string;
@@ -174,3 +178,30 @@ export const deleteUser = async (
     res.status(500).json({ message: "Server error", error });
   }
 };
+
+export const adminDashboard = async(req:Request,res:Response):Promise<void>=>{
+  try {
+    console.log('req is here');
+    
+
+    const leaves = await Leave.find({status:'Pending'}).populate('userId')
+
+    const department = await Department.find()
+
+    const payroll = await Payroll.find().populate('employee')
+
+    const projects = await projectModel.find().populate('department')
+
+    console.log(leaves,department,payroll,projects);
+    
+
+    res.status(200).json({leaves,department,payroll,projects})
+
+
+    
+  } catch (error) {
+    console.log(error);
+    
+    res.status(500).json({ message: "Server error", error });
+  }
+}
