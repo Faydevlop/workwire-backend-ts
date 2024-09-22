@@ -76,38 +76,53 @@ const io = new Server(server,{
     methods:['GET','POST']
   }
 })
+io.on('connection', (socket) => {
+  // When a user connects, join them to a room based on their user ID
+  socket.on('register', (userId) => {
+    socket.join(userId);
+    console.log(`User ${userId} joined room ${userId}`);
+  });
 
-  io.on('connection',(socket)=>{
-    // console.log('a user connected',socket.id);
+  socket.on('message', async (data) => {
+    console.log('message from client', data);
 
-    socket.on('message',async(data)=>{
-      console.log('message from client',data);  
+    const newMessage = new Message({
+      sender: data.sender,
+      receiver: data.receiver,
+      content: data.content,
+      timestamp: new Date(),
+    });
 
-      const newMessage = new Message({
-        sender:data.sender,
-        receiver:data.receiver,
-        content:data.content,
-        timestamp:new Date()
-      })
+    await newMessage.save();
 
-      await newMessage.save()
+    // Send the message to the recipient's room
+    io.to(data.receiver).emit('message', data);
 
+    // Optionally send the message back to the sender
+    socket.emit('message', data);
+  });
 
-      io.emit('message',data)
-      
-    })
+  socket.on('message-seen', async ({ senderId, receiverId }) => {
+    try {
+      // Update all messages from the sender to the receiver as seen
+      await Message.updateMany(
+        { sender: senderId, receiver: receiverId, seen: false },
+        { $set: { seen: true } },
+        { $set: { messageStatus: 'seen' } }
+      );
+  
+      // Notify the sender that their messages have been seen
+      io.to(senderId).emit('messages-seen', { senderId, receiverId });
+    } catch (error) {
+      console.error('Failed to update seen status:', error);
+    }
+  });
 
+  socket.on('disconnect', () => {
+    console.log('user disconnected', socket.id);
+  });
+});
 
-
-    
-
-    // handle disconnect
-    socket.on('disconnect',()=>{
-      console.log('user disconnected',socket.id);
-      
-    })
-
-  })
 
 
 mongoose.connect(process.env.MONGO_URI!,{

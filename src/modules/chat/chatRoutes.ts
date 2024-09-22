@@ -42,4 +42,19 @@ router.get('/adminlist',async(req,res)=>{
 
 })
 
+router.post('/mark-as-seen', async (req, res) => {
+  const { senderId, receiverId } = req.body;
+  
+  try {
+    await Message.updateMany(
+      { sender: senderId, receiver: receiverId, seen: false },
+      { $set: { seen: true } }
+    );
+    res.sendStatus(200);
+  } catch (error) {
+    console.error('Failed to mark messages as seen:', error);
+    res.status(500).send('Failed to mark messages as seen');
+  }
+});
+
 export default router;

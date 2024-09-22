@@ -26,7 +26,7 @@ export const verifyRefreshToken = (token: any): JwtPayload | null => {
 
 // Generate access token
 export const generateAccessToken = (userId: any): string => {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1h' });
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '1d' });
 };
 
 // Generate refresh token

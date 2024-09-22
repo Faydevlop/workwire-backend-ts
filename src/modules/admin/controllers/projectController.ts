@@ -4,6 +4,7 @@ import User from "../../employee/models/userModel";
 import mongoose from "mongoose";
 import Department from "../../Department/model/departmentModel";
 import taskModel from "../../TaskManagement/models/taskModel";
+import projectModel from "../models/projectModel";
 
 export const addNewProject = async (
   req: Request,
@@ -26,6 +27,13 @@ export const addNewProject = async (
   
 
   try {
+
+    const existProject = await projectModel.find({name:name});
+
+    if(existProject){
+      res.status(400).json({message:'Duplicate Project is Found'})
+      return
+    }
 
 
     const newProject = new project({

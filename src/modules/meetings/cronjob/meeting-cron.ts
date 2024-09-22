@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { Meeting } from '../model/MeetingModal'; // Adjust the import path as needed
-import mongoose from 'mongoose';
+
 
 // Function to check and update meeting statuses
 const checkMeetingsStatus = async (): Promise<void> => {

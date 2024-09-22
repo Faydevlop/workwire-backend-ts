@@ -9,6 +9,7 @@ import taskModel from "../../TaskManagement/models/taskModel";
 import Payroll from "../../PayrollManagement/models/payrollModel";
 import Leave from "../../leaveManagement/models/leaveModel";
 
+
 export const updateProfile = async (
   req: Request,
   res: Response
@@ -148,3 +149,26 @@ export const dashboardData = async (req: Request, res: Response): Promise<void> 
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+export const employeedetails = async(req:Request,res:Response):Promise<void>=>{
+  try {
+    console.log('user details req is here');
+    
+
+    const {userId} = req.params;
+
+    const userdata = await User.findById(userId);
+
+    if(!userdata){
+      res.status(400).json({message:'User Not Found'})
+      return
+    }
+
+    console.log(userdata);
+    
+    res.status(200).json({userdata})
+    
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}

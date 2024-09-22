@@ -3,6 +3,7 @@ import { employeeLogin } from "../controllers/employeeAuth";
 import {
   ChangePassword,
   dashboardData,
+  employeedetails,
   resetPassRequest,
   updateProfile,
 } from "../controllers/employeeController";
@@ -26,5 +27,7 @@ router.post("/reqest-reset-password/:userId", resetPassRequest);
 router.post("/reset-password", ChangePassword);
 // employee dashboard data
 router.get('/dashboard/:userId',dashboardData)
+// user data for vedio call page 
+router.get('/userdata/:userId',employeedetails)
 
 export default router;
