@@ -76,6 +76,7 @@ const io = new Server(server,{
     methods:['GET','POST']
   }
 })
+export { io };
 io.on('connection', (socket) => {
   // When a user connects, join them to a room based on their user ID
   socket.on('register', (userId) => {
@@ -90,6 +91,7 @@ io.on('connection', (socket) => {
       sender: data.sender,
       receiver: data.receiver,
       content: data.content,
+      messageStatus:data.messageStatus,
       timestamp: new Date(),
     });
 
@@ -106,7 +108,7 @@ io.on('connection', (socket) => {
     try {
       // Update all messages from the sender to the receiver as seen
       await Message.updateMany(
-        { sender: senderId, receiver: receiverId, seen: false },
+        { sender: senderId, receiver: receiverId, messageStatus: 'delivered' },
         { $set: { seen: true } },
         { $set: { messageStatus: 'seen' } }
       );

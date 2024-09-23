@@ -1,6 +1,7 @@
 import express from 'express';
 import Message from './chatModel'; // Update with the correct path
 import Admin from '../admin/models/adminModel';
+import { io } from '../../app';
 
 const router = express.Router();
 
@@ -42,18 +43,24 @@ router.get('/adminlist',async(req,res)=>{
 
 })
 
+
+
 router.post('/mark-as-seen', async (req, res) => {
   const { senderId, receiverId } = req.body;
-  
+
   try {
     await Message.updateMany(
-      { sender: senderId, receiver: receiverId, seen: false },
-      { $set: { seen: true } }
+      { sender: senderId, receiver: receiverId, messageStatus: 'delivered' },
+      {  seen: true  },
+      { messageStatus: 'seen' }
     );
-    res.sendStatus(200);
+    
+    // Emit the 'messages-seen' event to the sender
+    io.to(senderId).emit('messages-seen', { senderId });
+
+    res.status(200).json({ message: 'Messages marked as seen' });
   } catch (error) {
-    console.error('Failed to mark messages as seen:', error);
-    res.status(500).send('Failed to mark messages as seen');
+    res.status(500).json({ error: 'Failed to update message status' });
   }
 });
 

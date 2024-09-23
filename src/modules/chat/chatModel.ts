@@ -15,7 +15,7 @@ const MessageSchema: Schema = new Schema({
   content: { type: String, required: true },
   seen: { type: Boolean, default: false },
   timestamp: { type: Date, default: Date.now },
-  messageStatus:{ type: String, default:'delivery' },
+  messageStatus:{ type: String, default:'delivered' },
 });
 
 const Message = mongoose.model<IMessage>('Message', MessageSchema);
