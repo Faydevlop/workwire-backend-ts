@@ -110,3 +110,22 @@ export const createNotification = async(req:Request,res:Response):Promise<void>=
     }
   };
   
+
+  export const eachUserNotification = async(req:Request,res:Response):Promise<void>=>{
+    try {
+      const {userId} = req.params
+      console.log('notification req is here');
+      
+      const allnotifications = await notificationModel.find({receiver:userId,type:'message'});
+
+      if(!allnotifications){
+        res.status(400).json({message:'No Notifications'});
+        return
+      }
+
+      res.status(200).json({notifications:allnotifications})
+      
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching data" });
+    }
+  }

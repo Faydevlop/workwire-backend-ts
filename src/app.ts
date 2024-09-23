@@ -59,6 +59,7 @@ app.use('/notifications', notification);
 
 
 
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.set('view engine', 'ejs');
 
@@ -77,6 +78,7 @@ const io = new Server(server,{
   }
 })
 export { io };
+
 io.on('connection', (socket) => {
   // When a user connects, join them to a room based on their user ID
   socket.on('register', (userId) => {

@@ -2,6 +2,8 @@ import { Request,Response } from "express";
 import { Meeting } from "../model/MeetingModal";
 import User from "../../employee/models/userModel";
 import moment from "moment";
+import notificationModel from "../../notification/model/notificationModel";
+import { io } from "../../../app";
 
 export const createMeeting = async (req: Request, res: Response): Promise<void> => {
     const { userId } = req.params;
@@ -37,8 +39,21 @@ export const createMeeting = async (req: Request, res: Response): Promise<void> 
         createdBy: userId,
         time: formattedTime
       });
-  
+
       await newMeeting.save();
+
+
+      for (const participant of participants) {
+        const newNotification = new notificationModel({
+            sender: userId,
+            receiver: participant,
+            type: 'message',
+            message: `You have been invited to a meeting: ${meetingName} on ${date} at ${formattedTime}.`,
+        });
+
+        await newNotification.save();
+        io.to(participant).emit('newNotification', newNotification);
+    }
   
       res.status(200).json({ message: 'Meeting Scheduled Successfully' });
     } catch (error) {

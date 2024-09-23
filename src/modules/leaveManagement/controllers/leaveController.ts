@@ -5,6 +5,8 @@ import Department from "../../Department/model/departmentModel";
 
 import nodemailer from "nodemailer";
 import Admin from "../../admin/models/adminModel";
+import { io } from "../../../app";
+import notificationModel from "../../notification/model/notificationModel";
 
 // Email configuration
 const transporter = nodemailer.createTransport({
@@ -204,7 +206,7 @@ export const listdetails = async(req:Request,res:Response):Promise<void>=>{
 export const changeStatus = async(req:Request,res:Response):Promise<void>=>{
   const {action,userId,comment} = req.body;
   const {leaveId} = req.params;
-  console.log('status change request is here');
+  console.log('status change request is her mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmme');
   console.log(leaveId);
   
   
@@ -216,9 +218,26 @@ export const changeStatus = async(req:Request,res:Response):Promise<void>=>{
     res.status(404).json({message:'invalid action'})
     return
   }
+  const user = userLeave.userId.toString()
+
+
+  
+  const newNotification = new notificationModel({
+  
+    receiver: user,
+    type: 'message',
+    message: `Your Leave Request Is : ${action} Date:${new Date(userLeave.startDate).toLocaleDateString()} to ${new Date(userLeave.endDate).toLocaleDateString()}`,
+});
+
+
+
+await newNotification.save();
+io.to(user).emit('newNotification', newNotification);
 
   if (action === 'Approved') {
+   
     userLeave.status = 'Approved';
+   
   } else if (action === 'Rejected') {
     userLeave.comment = comment || '';
     userLeave.monthlyLeaveCount -= 1
@@ -227,6 +246,7 @@ export const changeStatus = async(req:Request,res:Response):Promise<void>=>{
     res.status(400).json({ message: 'Invalid action.' });
     return;
   }
+  console.log('res is here 1');
 
   
 
