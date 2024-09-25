@@ -8,6 +8,16 @@ import { Meeting } from "../../meetings/model/MeetingModal";
 import taskModel from "../../TaskManagement/models/taskModel";
 import Payroll from "../../PayrollManagement/models/payrollModel";
 import Leave from "../../leaveManagement/models/leaveModel";
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail', 
+  auth: {
+    user: process.env.EMAIL, 
+    pass: process.env.EMAILPASS,
+  },
+});
+
 
 
 export const updateProfile = async (
@@ -104,7 +114,7 @@ export const ChangePassword = async (req: Request, res: Response) => {
 };
 
 export const dashboardData = async (req: Request, res: Response): Promise<void> => {
-  console.log('dashboard data req is here');
+ 
   
   try {
     const { userId } = req.params;
@@ -152,7 +162,7 @@ export const dashboardData = async (req: Request, res: Response): Promise<void> 
 
 export const employeedetails = async(req:Request,res:Response):Promise<void>=>{
   try {
-    console.log('user details req is here');
+    
     
 
     const {userId} = req.params;
@@ -164,9 +174,104 @@ export const employeedetails = async(req:Request,res:Response):Promise<void>=>{
       return
     }
 
-    console.log(userdata);
+   
     
     res.status(200).json({userdata})
+    
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+function generateOtp() {
+  // Generate a random 6-digit number between 100000 and 999999
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  return otp.toString(); // Convert to string if needed
+}
+
+
+export const resetEmail = async(req:Request,res:Response):Promise<void>=>{
+  
+  
+  try {
+
+    const {userId} = req.params;
+    const {newEmail} = req.body
+   
+
+    const oldUserdata = await User.findOne({email:newEmail});
+
+    if(oldUserdata){
+      res.status(400).json({message:'The email is already taken'})
+      return
+    }
+    
+
+    const userData = await User.findById(userId)
+
+    if(!userData){
+      res.status(400).json({message:'User Not found'})
+      return
+    }
+
+  
+    const otp = generateOtp()
+
+
+       // Send email notification
+       const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: newEmail, // Change this to the recipient's email
+        subject: `OTP - Email Change ${userData.email}`,
+        text: `
+  
+  
+  Your email resent OTP is : ${otp}
+  
+  
+  `
+  
+      };
+  
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log('Error sending email:', error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+  
+
+    
+res.status(200).json({otp})
+    
+    
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+export const setNewEmail = async(req:Request,res:Response):Promise<void>=>{
+  try {
+
+    const {userId} = req.params;
+    const {newEmail} = req.body;
+
+    const existEmail = await User.findOne({email:newEmail})
+
+    if(existEmail){
+      res.status(400).json({message:'The Email is already taken'})
+      return
+    }
+
+    const userData = await User.findByIdAndUpdate(userId,{email:newEmail}, { new: true });
+
+    if(!userData){
+      res.status(400).json({message:'User Not Found'})
+      return
+    }
+
+    res.status(200).json({message:'User email Updated success'})
     
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });

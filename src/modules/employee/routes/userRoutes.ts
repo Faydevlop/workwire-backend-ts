@@ -4,7 +4,9 @@ import {
   ChangePassword,
   dashboardData,
   employeedetails,
+  resetEmail,
   resetPassRequest,
+  setNewEmail,
   updateProfile,
 } from "../controllers/employeeController";
 import upload from "../middlewares/upload";
@@ -29,5 +31,9 @@ router.post("/reset-password", ChangePassword);
 router.get('/dashboard/:userId',dashboardData)
 // user data for vedio call page 
 router.get('/userdata/:userId',employeedetails)
+// sending otp for email 
+router.post('/resetEmail/:userId',resetEmail)
+// updating email 
+router.post('/updateEmail/:userId',setNewEmail)
 
 export default router;
