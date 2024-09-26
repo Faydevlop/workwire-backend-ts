@@ -43,7 +43,7 @@ const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: process.env.FRONTENDAPI, // Your frontend URL
+    origin: '*', // Your frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true // Allow cookies to be sent
 }));
@@ -72,7 +72,7 @@ app.use((err, req, res, next) => {
 });
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: process.env.FRONTENDAPI,
+        origin: '*',
         methods: ['GET', 'POST']
     }
 });
