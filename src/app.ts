@@ -32,7 +32,7 @@ const server = http.createServer(app)
 
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173', // Your frontend URL
+  origin: process.env.FRONTENDAPI, // Your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true // Allow cookies to be sent
 }));
