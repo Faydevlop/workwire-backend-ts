@@ -63,7 +63,7 @@ app.use('/notifications', notification);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.set('view engine', 'ejs');
 
-app.get('/', (req: Request, res: Response) => res.send('server is ready here'));
+app.get('/', (req: Request, res: Response) => res.send('server is ready to start'));
 
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -72,6 +72,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 const io = new Server(server,{
+
   cors:{
     origin:'*',
     methods:['GET','POST']
