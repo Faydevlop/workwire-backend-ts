@@ -43,7 +43,7 @@ const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:5173', // Your frontend URL
+    origin: process.env.FRONTENDAPI, // Your frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true // Allow cookies to be sent
 }));
