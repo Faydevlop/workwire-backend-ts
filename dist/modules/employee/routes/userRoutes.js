@@ -7,13 +7,12 @@ const express_1 = __importDefault(require("express"));
 const employeeAuth_1 = require("../controllers/employeeAuth");
 const employeeController_1 = require("../controllers/employeeController");
 const upload_1 = __importDefault(require("../middlewares/upload"));
-const jwtMiddleware_1 = require("../../../middlewares/jwtMiddleware");
 // import { updatePicture } from '../controllers/employeeController';
 const router = express_1.default.Router();
 // employee Login
 router.post("/login", employeeAuth_1.employeeLogin);
 // update Profile
-router.put("/editprofile/:userId", upload_1.default.single("profilePhoto"), jwtMiddleware_1.protect, employeeController_1.updateProfile);
+router.put("/editprofile/:userId", upload_1.default.single("profilePhoto"), employeeController_1.updateProfile);
 // update reset with link
 router.post("/reqest-reset-password/:userId", employeeController_1.resetPassRequest);
 // update password

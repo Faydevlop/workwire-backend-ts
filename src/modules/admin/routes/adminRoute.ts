@@ -37,9 +37,9 @@ router.post("/login", adminLogin);
 // protected routes
 
 // Adding new User with email verification
-router.post("/adduser",protect, AddUser);
+router.post("/adduser", AddUser);
 // Getting all the user Data
-router.get("/getusers",protect, getAllUsers);
+router.get("/getusers", getAllUsers);
 // get detials of specific user
 router.get("/getuser/:userId", getSpecificUser);
 // update user data
@@ -50,7 +50,7 @@ router.delete("/deleteuser/:userId", deleteUser);
 // router.get("/getmanagers",protect, getAllmanager);
 // router.get("/getUnassignedemployees",protect, getAvilableempo);
 // post for creating new project
-router.post("/addNewProject",protect, addNewProject);
+router.post("/addNewProject", addNewProject);
 // get for project listing
 router.get("/getprojects", listProjects);
 // geting specific project details

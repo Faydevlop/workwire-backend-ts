@@ -20,7 +20,7 @@ router.post("/login", employeeLogin);
 // update Profile
 router.put(
   "/editprofile/:userId",
-  upload.single("profilePhoto"),protect,
+  upload.single("profilePhoto"),
   updateProfile
 );
 // update reset with link

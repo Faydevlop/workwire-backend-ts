@@ -65,7 +65,7 @@ app.post('/refresh-token', authRoute_1.refreshToken);
 app.use('/notifications', notificaitoRoutes_1.default);
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, 'uploads')));
 app.set('view engine', 'ejs');
-app.get('/', (req, res) => res.send('server is ready'));
+app.get('/', (req, res) => res.send('server is ready here'));
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
