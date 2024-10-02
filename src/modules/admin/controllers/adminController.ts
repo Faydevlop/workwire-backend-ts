@@ -8,6 +8,7 @@ import Leave from "../../leaveManagement/models/leaveModel";
 import Department from "../../Department/model/departmentModel";
 import Payroll from "../../PayrollManagement/models/payrollModel";
 import projectModel from "../models/projectModel";
+import Admin from "../models/adminModel";
 
 interface AddUserBody {
   firstName: string;
@@ -117,7 +118,7 @@ export const getSpecificUser = async (req: Request, res: Response) => {
 
   const { userId } = req.params;
   try {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate('department')
     if (!user) {
       res.status(400).json({ message: "User Nor found" });
       return;
@@ -203,5 +204,45 @@ export const adminDashboard = async(req:Request,res:Response):Promise<void>=>{
     console.log(error);
     
     res.status(500).json({ message: "Server error", error });
+  }
+}
+
+export const adminChagePass = async(req:Request,res:Response):Promise<void>=>{
+  try {
+    const {userId} = req.params
+
+    const { oldPassword , newPassword } = req.body;
+    console.log(oldPassword,newPassword,'here here here');
+    
+
+
+    const admin = await Admin.findById(userId);
+
+    if(!admin){
+      res.status(400).json({message:'Admin Not Found'})
+      return
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword,admin.password);
+    if(!isMatch){
+      res.status(400).json({ message: "Incorrect Old Password" });
+      return;
+    }
+
+    const saltRounds = 10;
+    const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Step 4: Update the admin's password with the new hashed password
+    admin.password = hashedNewPassword;
+    await admin.save();
+    res.status(200).json({ message: "Password changed successfully" });
+    
+
+
+    
+  } catch (error) {
+    console.error("Error changing admin password:", error);
+    res.status(500).json({ message: "Error changing password" });
+
   }
 }

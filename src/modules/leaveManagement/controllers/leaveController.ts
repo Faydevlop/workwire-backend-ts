@@ -148,7 +148,7 @@ ${userdata?.firstName} ${userdata?.lastName}
 export const listingLeaves = async (req:Request,res:Response):Promise<void>=>{
   try {
     
-    const LeavesLists = await Leave.find().populate('userId');
+    const LeavesLists = await Leave.find({isChanged:false}).populate('userId');
     if(!LeavesLists){
       res.status(400).json({message:'Leave Requests is empty'})
       return
@@ -237,11 +237,13 @@ io.to(user).emit('newNotification', newNotification);
   if (action === 'Approved') {
    
     userLeave.status = 'Approved';
+    userLeave.isChanged = true;
    
   } else if (action === 'Rejected') {
     userLeave.comment = comment || '';
     userLeave.monthlyLeaveCount -= 1
     userLeave.status = 'Rejected';
+    userLeave.isChanged = true;
   } else {
     res.status(400).json({ message: 'Invalid action.' });
     return;

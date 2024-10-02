@@ -71,6 +71,8 @@ export const HrLogin = async(req:Request<{},{},HrLoginBody>,res:Response):Promis
         const {userId} = req.params
 
         const pendingReqeusts = await JobReferral.find({status:'pending'});
+        console.log(pendingReqeusts);
+        
 
         const upcomingMeetings = await Meeting.find({
             createdBy: userId,
@@ -79,6 +81,7 @@ export const HrLogin = async(req:Request<{},{},HrLoginBody>,res:Response):Promis
           });
 
         const leaves = await Leave.find({status:'Pending'}).populate('userId')
+
 
         res.status(200).json({pendingReqeusts,upcomingMeetings,leaves})
 

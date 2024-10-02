@@ -22,18 +22,31 @@ export const addNewProject = async (
     sdepartment,
  
   } = req.body;
+console.log(name,
+  status,
+  startDate,
+  endDate,
+  priority,
+  description,
+  sdepartment,);
 
 
   
 
   try {
-
-    const existProject = await projectModel.find({name:name});
+    console.log('11');
+    const existProject = await projectModel.findOne({name:name});
+    console.log(existProject);
+    
+    console.log('12');
 
     if(existProject){
       res.status(400).json({message:'Duplicate Project is Found'})
+      console.log('123');
       return
     }
+    console.log('1');
+    
 
 
     const newProject = new project({
@@ -46,10 +59,12 @@ export const addNewProject = async (
       department: sdepartment || undefined,
    
     });
+    console.log('2');
 
     await newProject.save();
 
     res.status(201).json({ message: "Project created successfully" });
+    console.log('3');
   } catch (error) {
     console.error("Error creating project:", error);
     res.status(500).json({ message: "Error creating project" });

@@ -10,6 +10,7 @@ import { protect } from "../../../middlewares/jwtMiddleware";
 
 import {
   AddUser,
+  adminChagePass,
   adminDashboard,
   deleteUser,
   getAllUsers,
@@ -65,5 +66,7 @@ router.get('/projectlist/:managerId',projectlisting)
 router.get('/listtask/:projectId',listTasks)
 // admin dashboard 
 router.get('/dashboard',adminDashboard)
+// admin change password
+router.post('/changepass/:userId',adminChagePass)
 
 export default router;
