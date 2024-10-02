@@ -135,7 +135,7 @@ ${userdata === null || userdata === void 0 ? void 0 : userdata.firstName} ${user
 exports.createLeave = createLeave;
 const listingLeaves = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const LeavesLists = yield leaveModel_1.default.find().populate('userId');
+        const LeavesLists = yield leaveModel_1.default.find({ isChanged: false }).populate('userId');
         if (!LeavesLists) {
             res.status(400).json({ message: 'Leave Requests is empty' });
             return;
@@ -199,11 +199,13 @@ const changeStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         app_1.io.to(user).emit('newNotification', newNotification);
         if (action === 'Approved') {
             userLeave.status = 'Approved';
+            userLeave.isChanged = true;
         }
         else if (action === 'Rejected') {
             userLeave.comment = comment || '';
             userLeave.monthlyLeaveCount -= 1;
             userLeave.status = 'Rejected';
+            userLeave.isChanged = true;
         }
         else {
             res.status(400).json({ message: 'Invalid action.' });

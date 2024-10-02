@@ -42,4 +42,6 @@ router.get('/projectlist/:managerId', projectController_1.projectlisting);
 router.get('/listtask/:projectId', projectController_1.listTasks);
 // admin dashboard 
 router.get('/dashboard', adminController_1.adminDashboard);
+// admin change password
+router.post('/changepass/:userId', adminController_1.adminChagePass);
 exports.default = router;

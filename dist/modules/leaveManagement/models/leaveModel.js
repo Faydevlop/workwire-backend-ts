@@ -45,6 +45,10 @@ const LeaveSchema = new mongoose_1.Schema({
         type: Date,
         default: Date.now, // Automatically set the current date
     },
+    isChanged: {
+        type: Boolean, // Field to store admin's comment
+        default: false, // Default is an empty string if no comment is provided
+    },
 });
 // Create and export the Leave model
 const Leave = (0, mongoose_1.model)('Leave', LeaveSchema);

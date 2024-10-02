@@ -95,6 +95,14 @@ io.on('connection', (socket) => {
         yield newMessage.save();
         // Send the message to the recipient's room
         io.to(data.receiver).emit('message', data);
+        const lastMessage = {
+            content: newMessage.content,
+            timestamp: newMessage.timestamp,
+            sender: data.sender,
+            receiver: data.receiver,
+        };
+        io.to(data.sender).emit('update-last-message', lastMessage);
+        io.to(data.receiver).emit('update-last-message', lastMessage);
         // Optionally send the message back to the sender
         socket.emit('message', data);
     }));

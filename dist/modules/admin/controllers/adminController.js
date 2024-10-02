@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminDashboard = exports.deleteUser = exports.updateUser = exports.getSpecificUser = exports.getAllUsers = exports.AddUser = void 0;
+exports.adminChagePass = exports.adminDashboard = exports.deleteUser = exports.updateUser = exports.getSpecificUser = exports.getAllUsers = exports.AddUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const userModel_1 = __importDefault(require("../../employee/models/userModel"));
 const mailVerification_1 = __importDefault(require("../middlewares/mailVerification"));
@@ -20,6 +20,7 @@ const leaveModel_1 = __importDefault(require("../../leaveManagement/models/leave
 const departmentModel_1 = __importDefault(require("../../Department/model/departmentModel"));
 const payrollModel_1 = __importDefault(require("../../PayrollManagement/models/payrollModel"));
 const projectModel_1 = __importDefault(require("../models/projectModel"));
+const adminModel_1 = __importDefault(require("../models/adminModel"));
 function generateRandomPassword(length = 12) {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
@@ -88,7 +89,7 @@ const getSpecificUser = (req, res) => __awaiter(void 0, void 0, void 0, function
     console.log("specific user request is here");
     const { userId } = req.params;
     try {
-        const user = yield userModel_1.default.findById(userId);
+        const user = yield userModel_1.default.findById(userId).populate('department');
         if (!user) {
             res.status(400).json({ message: "User Nor found" });
             return;
@@ -158,3 +159,31 @@ const adminDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.adminDashboard = adminDashboard;
+const adminChagePass = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId } = req.params;
+        const { oldPassword, newPassword } = req.body;
+        console.log(oldPassword, newPassword, 'here here here');
+        const admin = yield adminModel_1.default.findById(userId);
+        if (!admin) {
+            res.status(400).json({ message: 'Admin Not Found' });
+            return;
+        }
+        const isMatch = yield bcrypt_1.default.compare(oldPassword, admin.password);
+        if (!isMatch) {
+            res.status(400).json({ message: "Incorrect Old Password" });
+            return;
+        }
+        const saltRounds = 10;
+        const hashedNewPassword = yield bcrypt_1.default.hash(newPassword, saltRounds);
+        // Step 4: Update the admin's password with the new hashed password
+        admin.password = hashedNewPassword;
+        yield admin.save();
+        res.status(200).json({ message: "Password changed successfully" });
+    }
+    catch (error) {
+        console.error("Error changing admin password:", error);
+        res.status(500).json({ message: "Error changing password" });
+    }
+});
+exports.adminChagePass = adminChagePass;

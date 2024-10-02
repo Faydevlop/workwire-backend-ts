@@ -62,6 +62,7 @@ const hrDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const { userId } = req.params;
         const pendingReqeusts = yield JobReferral_1.default.find({ status: 'pending' });
+        console.log(pendingReqeusts);
         const upcomingMeetings = yield MeetingModal_1.Meeting.find({
             createdBy: userId,
             date: { $gte: new Date() }, // Filter by future meetings

@@ -19,12 +19,18 @@ const taskModel_1 = __importDefault(require("../../TaskManagement/models/taskMod
 const projectModel_2 = __importDefault(require("../models/projectModel"));
 const addNewProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, status, startDate, endDate, priority, description, sdepartment, } = req.body;
+    console.log(name, status, startDate, endDate, priority, description, sdepartment);
     try {
-        const existProject = yield projectModel_2.default.find({ name: name });
+        console.log('11');
+        const existProject = yield projectModel_2.default.findOne({ name: name });
+        console.log(existProject);
+        console.log('12');
         if (existProject) {
             res.status(400).json({ message: 'Duplicate Project is Found' });
+            console.log('123');
             return;
         }
+        console.log('1');
         const newProject = new projectModel_1.default({
             name,
             status,
@@ -34,8 +40,10 @@ const addNewProject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             description,
             department: sdepartment || undefined,
         });
+        console.log('2');
         yield newProject.save();
         res.status(201).json({ message: "Project created successfully" });
+        console.log('3');
     }
     catch (error) {
         console.error("Error creating project:", error);
