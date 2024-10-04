@@ -110,12 +110,23 @@ io.on('connection', (socket) => {
       receiver: data.receiver,
     };
 
+
+
     io.to(data.sender).emit('update-last-message', lastMessage);
     io.to(data.receiver).emit('update-last-message', lastMessage);
 
     // Optionally send the message back to the sender
     socket.emit('message', data);
   });
+
+  socket.on('initiate-video-call', ({ senderId, receiverId, roomId }) => {4
+    console.log(`Initiating video call from ${senderId} to ${receiverId}`);
+    io.to(receiverId).emit('video-call-notification', { senderId, roomId });
+});
+
+socket.on('initiate-video-call', ({ senderId, receiverId, roomId }) => {
+  io.to(receiverId).emit('video-call-initiate', { senderId, roomId });
+});
 
   socket.on('message-seen', async ({ senderId, receiverId }) => {
     try {

@@ -10,6 +10,8 @@ interface ITasks extends Document{
     createdAt:Date;
     comments:mongoose.Schema.Types.ObjectId[] | null;
     priority:string;
+    cat:String;
+    attachments:String
 }
 
 const TaskSchema: Schema = new Schema({
@@ -22,6 +24,15 @@ const TaskSchema: Schema = new Schema({
     createdAt:Date,
     comments:[{ type: Schema.Types.ObjectId, ref: "Comments", default:null }],
     priority:String,
+    cat:{type:String ,default:'Task'},
+    attachments: [
+        {
+          fileName: { type: String,  },
+          fileUrl: { type: String, },
+          uploadedAt: { type: Date, default: Date.now },
+        },
+        
+      ],
 })
 
 export default mongoose.model<ITasks>('Tasks',TaskSchema  ) 
