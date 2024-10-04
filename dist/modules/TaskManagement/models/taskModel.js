@@ -34,5 +34,13 @@ const TaskSchema = new mongoose_1.Schema({
     createdAt: Date,
     comments: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Comments", default: null }],
     priority: String,
+    cat: { type: String, default: 'Task' },
+    attachments: [
+        {
+            fileName: { type: String, },
+            fileUrl: { type: String, },
+            uploadedAt: { type: Date, default: Date.now },
+        },
+    ],
 });
 exports.default = mongoose_1.default.model('Tasks', TaskSchema);

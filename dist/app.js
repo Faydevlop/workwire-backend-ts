@@ -65,7 +65,7 @@ app.post('/refresh-token', authRoute_1.refreshToken);
 app.use('/notifications', notificaitoRoutes_1.default);
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, 'uploads')));
 app.set('view engine', 'ejs');
-app.get('/', (req, res) => res.send('server is ready to start'));
+app.get('/', (req, res) => res.send('server is ready here'));
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Something broke!');
@@ -106,6 +106,14 @@ io.on('connection', (socket) => {
         // Optionally send the message back to the sender
         socket.emit('message', data);
     }));
+    socket.on('initiate-video-call', ({ senderId, receiverId, roomId }) => {
+        4;
+        console.log(`Initiating video call from ${senderId} to ${receiverId}`);
+        io.to(receiverId).emit('video-call-notification', { senderId, roomId });
+    });
+    socket.on('initiate-video-call', ({ senderId, receiverId, roomId }) => {
+        io.to(receiverId).emit('video-call-initiate', { senderId, roomId });
+    });
     socket.on('message-seen', (_a) => __awaiter(void 0, [_a], void 0, function* ({ senderId, receiverId }) {
         try {
             // Update all messages from the sender to the receiver as seen
